@@ -6,75 +6,85 @@
     <title>수라간 박상선 면접 보고서</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* 1. 기본 스타일 (컴퓨터 화면 및 인쇄 양식 기준) */
         *, *::before, *::after {
-            box-sizing: border-box; /* 모바일에서 화면이 옆으로 삐져나가는 것 완벽 방지 */
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-            background-color: #ffffff;
+            background-color: #f5f5f5; /* 화면에서 볼 때는 서류가 돋보이도록 연한 배경 */
             color: #000000;
             margin: 0;
-            padding: 20px;
-            display: block;
+            padding: 20px 10px;
         }
 
-        /* 입력 및 출력 영역 박스 */
+        /* 1. 공문서 스타일 서류 박스 (A4 한 장 크기에 딱 맞춤) */
         .report-container {
             width: 100%;
-            max-width: 650px; /* A4 용지 비율에 가장 깔끔한 폭 */
+            max-width: 700px; 
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 35px 40px; /* 내부 여백 균형 조정 */
             background: #ffffff;
+            border: 2px solid #000000; /* 공문서 느낌의 두꺼운 외곽 테두리 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         h1 {
             text-align: center;
-            font-size: 26px;
-            margin-top: 10px;
-            margin-bottom: 50px;
+            font-size: 30px; /* 제목 폰트 확대 */
+            margin-top: 5px;
+            margin-bottom: 40px;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 4px; /* 공문서 특유의 넓은 글자 간격 */
+            text-decoration: underline; /* 제목 밑줄로 엄격한 서식 느낌 강조 */
+            text-underline-offset: 8px;
         }
 
-        /* 항목 기본 배치: 양옆 정렬 (PC/인쇄용) */
+        /* 항목 줄 간격 세밀 조정 (두 장으로 넘어가는 것 방지) */
         .form-group {
-            display: table; /* WeasyPrint 및 인쇄 안정성을 위한 설정 */
+            display: table;
             width: 100%;
-            margin-bottom: 28px;
+            margin-bottom: 14px; /* 간격을 살짝 줄여 한 장 압축 */
         }
 
+        /* 공문 양식처럼 좌측 타이틀 영역을 꽉 차고 굵게 변경 */
         .form-group label {
             display: table-cell;
-            width: 210px; 
+            width: 220px; 
             font-weight: bold;
             white-space: nowrap;
             letter-spacing: -0.5px;
             vertical-align: middle;
-            font-size: 18px;
+            font-size: 19px; /* 사장님 요청으로 폰트 크기 대폭 확대 */
+            border-left: 4px solid #000000; /* 항목 왼쪽에 포인트를 주어 정돈된 느낌 */
+            padding-left: 10px;
         }
 
         .form-group .input-wrapper {
             display: table-cell;
             vertical-align: middle;
             width: auto;
+            padding-left: 15px;
         }
 
-        /* 입력창 밑줄 스타일 */
+        /* 기존 밑줄 대신 깔끔한 공문서용 테두리 박스로 변경 */
         .form-group input {
             width: 100%;
-            border: none;
-            border-bottom: 1px solid #000000;
-            background: transparent;
-            font-size: 18px;
+            border: 1px solid #767676;
+            background: #ffffff;
+            font-size: 18px; /* 입력 글자 크기 확대 */
             color: #000000;
-            padding: 4px 5px;
+            padding: 8px 12px; /* 위아래 여백을 주어 타이핑하기 편하게 함 */
             outline: none;
             font-family: inherit;
         }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #000000;
+            background-color: #fafafa;
+        }
 
-        /* 특이사항 칸 (메모장) 기본 스타일 */
+        /* 특이사항 칸 스타일 최적화 */
         .form-group.textarea-group label {
             vertical-align: top;
             padding-top: 8px;
@@ -83,35 +93,33 @@
         .form-group textarea {
             width: 100%;
             resize: none;
-            height: 120px;
-            border: 1px solid #000000;
-            padding: 10px;
-            font-size: 17px;
+            height: 110px; /* 한 장에 쏙 들어가도록 높이 최적화 */
+            border: 1px solid #767676;
+            padding: 12px;
+            font-size: 18px;
             font-family: inherit;
             outline: none;
             box-sizing: border-box;
         }
 
-        /* 버튼 영역 스타일 */
+        /* 하단 버튼 영역 */
         .btn-container {
-            margin: 20px auto 40px auto;
+            margin: 20px auto;
             text-align: center;
             width: 100%;
-            max-width: 650px;
-            padding: 0 20px;
+            max-width: 700px;
         }
 
         .print-btn {
             background-color: #000000;
             color: #ffffff;
             border: 1px solid #000000;
-            padding: 15px 0;
+            padding: 16px 0;
             width: 100%;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            border-radius: 4px;
         }
 
         .print-btn:hover {
@@ -119,66 +127,90 @@
             color: #000000;
         }
 
-        /* 2. 스마트폰 전용 화면 (모바일 최적화) 설정 */
+        /* 📱 스마트폰(모바일) 화면 최적화 */
         @media screen and (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 10px 5px;
+                background-color: #ffffff;
             }
             .report-container {
-                padding: 20px 10px;
+                padding: 20px 15px;
+                border: 1px solid #000000;
+                box-shadow: none;
             }
             h1 {
-                font-size: 22px;
-                margin-bottom: 35px;
+                font-size: 24px;
+                margin-bottom: 30px;
             }
-            /* 모바일에서는 항목명과 입력창을 위아래 배치로 전환하여 깨짐 방지 */
             .form-group, .form-group label, .form-group .input-wrapper {
                 display: block;
                 width: 100%;
             }
             .form-group label {
-                margin-bottom: 8px;
-                font-size: 16px;
+                margin-bottom: 6px;
+                font-size: 17px;
+                border-left: 3px solid #000000;
+                padding-left: 8px;
+            }
+            .form-group .input-wrapper {
+                padding-left: 0;
             }
             .form-group input {
-                font-size: 16px;
-                padding: 6px 5px;
-                margin-bottom: 10px;
+                font-size: 17px;
+                padding: 8px 10px;
             }
             .form-group textarea {
-                font-size: 16px;
+                font-size: 17px;
+                height: 130px;
+            }
+            .print-btn {
+                font-size: 17px;
             }
         }
 
-        /* 3. PDF 저장 및 프린트 인쇄 시 설정 (모바일에서 눌러도 깔끔한 서류로 출력되게 고정) */
+        /* 🖨️ PDF 파일 변환 및 인쇄 강제 설정 (A4 1장 완벽 고정 마법) */
         @media print {
-            .btn-container {
-                display: none !important;
+            @page {
+                size: A4 portrait;
+                margin: 12mm 10mm; /* 최적의 상하좌우 여백 설정 */
             }
             body {
                 padding: 0 !important;
-                background-color: #ffffff;
+                background-color: #ffffff !important;
             }
             .report-container {
-                padding: 10px 0 !important;
+                padding: 20px 25px !important;
+                border: 2px solid #000000 !important;
                 width: 100% !important;
                 max-width: 100% !important;
+                box-shadow: none !important;
+                page-break-inside: avoid; /* 무조건 한 장 안에서 해결되도록 고정 */
             }
-            /* 인쇄 시에는 무조건 PC 형태의 깔끔한 가로 정렬 서류로 나오도록 강제 고정 */
+            .btn-container {
+                display: none !important;
+            }
             .form-group {
                 display: table !important;
                 width: 100% !important;
+                margin-bottom: 15px !important;
             }
             .form-group label {
                 display: table-cell !important;
-                width: 210px !important;
-                font-size: 18px !important;
+                width: 220px !important;
+                font-size: 19px !important;
             }
             .form-group .input-wrapper {
                 display: table-cell !important;
+                padding-left: 15px !important;
             }
             .form-group input {
                 font-size: 18px !important;
+                border: 1px solid #000000 !important;
+            }
+            .form-group textarea {
+                font-size: 18px !important;
+                border: 1px solid #000000 !important;
+                height: 130px !important;
             }
         }
     </style>
@@ -186,7 +218,7 @@
 <body>
 
     <div class="report-container" id="pdf-area">
-        <h1>수라간 박상선 면접 보고서</h1>
+        <h1>수라간 면접 보고서</h1>
         
         <div class="form-group">
             <label>날짜 :</label>
@@ -257,7 +289,7 @@
             const element = document.getElementById('pdf-area');
             
             const options = {
-                margin:       15,
+                margin:       0, /* CSS 내부 마진을 적극 활용하기 위해 0으로 변경 */
                 filename:     '수라간_면접보고서_' + new Date().toISOString().substring(0, 10) + '.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },

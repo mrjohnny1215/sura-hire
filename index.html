@@ -17,68 +17,87 @@
             align-items: center;
         }
 
-        /* 입력 및 출력 영역 박스 */
+        /* 입력 및 출력 영역 박스 (전체 중앙 정렬 및 여백 고정) */
         .report-container {
             width: 100%;
-            max-width: 700px;
-            padding: 40px;
+            max-width: 650px; /* 인쇄 및 화면 보기 가장 안정적인 폭 */
+            padding: 40px 20px;
             box-sizing: border-box;
             background: #ffffff;
         }
 
         h1 {
             text-align: center;
-            font-size: 28px;
+            font-size: 26px;
             margin-bottom: 50px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
+        /* 양옆 여백을 꽉 채우고 정렬을 맞추기 위한 핵심 설정 */
         .form-group {
             display: flex;
-            align-items: flex-start;
-            margin-bottom: 25px;
+            justify-content: space-between; /* 항목명은 왼쪽 끝, 입력창은 오른쪽 끝으로 */
+            align-items: center;
+            margin-bottom: 28px;
             font-size: 18px;
+            width: 100%;
         }
 
+        /* 항목 이름 스타일 (너비 확보 및 한 줄 고정) */
         .form-group label {
-            width: 180px;
+            width: 210px; 
             font-weight: bold;
             flex-shrink: 0;
-            padding-top: 2px;
+            white-space: nowrap;
+            letter-spacing: -0.5px;
         }
 
-        /* 입력창 스타일: 흰 바탕에 테두리 없이 깔끔하게 조절 */
-        .form-group input, .form-group textarea {
+        /* 입력창 스타일 (양옆 정렬이 맞도록 늘어남 설정) */
+        .form-group input {
             flex-grow: 1;
             border: none;
-            border-bottom: 1px solid #cccccc;
+            border-bottom: 1px solid #000000; /* 조금 더 선명하게 검은색 밑줄로 변경 */
             background: transparent;
             font-size: 18px;
             color: #000000;
-            padding: 2px 5px;
+            padding: 4px 5px;
             outline: none;
             font-family: inherit;
+            width: 100%; /* 너비를 꽉 채우도록 설정 */
+        }
+
+        /* 특이사항 칸 (메모장) 정렬 예외 처리 */
+        .form-group.textarea-group {
+            align-items: flex-start;
         }
 
         .form-group textarea {
+            flex-grow: 1;
             resize: none;
-            height: 100px;
-            border: 1px solid #cccccc;
-            padding: 5px;
+            height: 120px;
+            border: 1px solid #000000; /* 깔끔한 검은색 테두리 */
+            padding: 10px;
+            font-size: 17px;
+            font-family: inherit;
+            outline: none;
+            box-sizing: border-box;
         }
 
         /* 버튼 영역 스타일 (PDF 출력 시 숨겨짐) */
         .btn-container {
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: center;
+            width: 100%;
+            max-width: 650px;
         }
 
         .print-btn {
             background-color: #000000;
             color: #ffffff;
             border: 1px solid #000000;
-            padding: 12px 35px;
+            padding: 12px 0;
+            width: 100%; /* 버튼도 서류 폭과 딱 맞게 가득 채워 정렬감 향상 */
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
@@ -90,7 +109,7 @@
             color: #000000;
         }
 
-        /* PDF 저장 시 버튼 등 불필요한 요소 제외하는 설정 */
+        /* PDF 저장 시 버튼 제외 및 여백 최적화 */
         @media print {
             .btn-container {
                 display: none;
@@ -99,7 +118,8 @@
                 padding: 0;
             }
             .report-container {
-                padding: 20px;
+                padding: 10px 0;
+                width: 100%;
             }
         }
     </style>
@@ -115,11 +135,11 @@
         </div>
         <div class="form-group">
             <label>이름 :</label>
-            <input type="text" placeholder="지원자 이름 입력">
+            <input type="text" placeholder="지원자 이름 또는 닉네임 입력">
         </div>
         <div class="form-group">
             <label>나이 :</label>
-            <input type="text" placeholder="예: 30대 / 만 32세">
+            <input type="text" placeholder="예: 30대 / 40대">
         </div>
         <div class="form-group">
             <label>성별 :</label>
@@ -141,7 +161,7 @@
             <label>근무 가능 요일 및 시간 :</label>
             <input type="text" placeholder="예: 주 6일(화~일) / 09:00 ~ 21:00">
         </div>
-        <div class="form-group">
+        <div class="form-group textarea-group">
             <label>특이사항 :</label>
             <textarea placeholder="칼질 능력(상/중/하), 보건증 유무, 인상 등 사장님 메모 공간"></textarea>
         </div>
@@ -152,23 +172,21 @@
     </div>
 
     <script>
-        // 오늘 날짜 자동으로 넣어주는 센스!
+        // 오늘 날짜 자동으로 입력되게 설정
         document.getElementById('date').value = new Date().toISOString().substring(0, 10);
 
         // PDF로 깔끔하게 변환해주는 함수
         function saveAsPDF() {
             const element = document.getElementById('pdf-area');
             
-            // PDF 저장 옵션 설정
             const options = {
-                margin:       10,
+                margin:       15,
                 filename:     '수라간_면접보고서_' + new Date().toISOString().substring(0, 10) + '.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // 변환 실행
             html2pdf().set(options).from(element).save();
         }
     </script>

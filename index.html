@@ -2,81 +2,89 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>수라간 박상선 면접 보고서</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* 1. 기본 스타일 (컴퓨터 화면 및 인쇄 양식 기준) */
+        *, *::before, *::after {
+            box-sizing: border-box; /* 모바일에서 화면이 옆으로 삐져나가는 것 완벽 방지 */
+        }
+
         body {
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
             background-color: #ffffff;
             color: #000000;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: block;
         }
 
-        /* 입력 및 출력 영역 박스 (전체 중앙 정렬 및 여백 고정) */
+        /* 입력 및 출력 영역 박스 */
         .report-container {
             width: 100%;
-            max-width: 650px; /* 인쇄 및 화면 보기 가장 안정적인 폭 */
+            max-width: 650px; /* A4 용지 비율에 가장 깔끔한 폭 */
+            margin: 0 auto;
             padding: 40px 20px;
-            box-sizing: border-box;
             background: #ffffff;
         }
 
         h1 {
             text-align: center;
             font-size: 26px;
+            margin-top: 10px;
             margin-bottom: 50px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
-        /* 양옆 여백을 꽉 채우고 정렬을 맞추기 위한 핵심 설정 */
+        /* 항목 기본 배치: 양옆 정렬 (PC/인쇄용) */
         .form-group {
-            display: flex;
-            justify-content: space-between; /* 항목명은 왼쪽 끝, 입력창은 오른쪽 끝으로 */
-            align-items: center;
-            margin-bottom: 28px;
-            font-size: 18px;
+            display: table; /* WeasyPrint 및 인쇄 안정성을 위한 설정 */
             width: 100%;
+            margin-bottom: 28px;
         }
 
-        /* 항목 이름 스타일 (너비 확보 및 한 줄 고정) */
         .form-group label {
+            display: table-cell;
             width: 210px; 
             font-weight: bold;
-            flex-shrink: 0;
             white-space: nowrap;
             letter-spacing: -0.5px;
+            vertical-align: middle;
+            font-size: 18px;
         }
 
-        /* 입력창 스타일 (양옆 정렬이 맞도록 늘어남 설정) */
+        .form-group .input-wrapper {
+            display: table-cell;
+            vertical-align: middle;
+            width: auto;
+        }
+
+        /* 입력창 밑줄 스타일 */
         .form-group input {
-            flex-grow: 1;
+            width: 100%;
             border: none;
-            border-bottom: 1px solid #000000; /* 조금 더 선명하게 검은색 밑줄로 변경 */
+            border-bottom: 1px solid #000000;
             background: transparent;
             font-size: 18px;
             color: #000000;
             padding: 4px 5px;
             outline: none;
             font-family: inherit;
-            width: 100%; /* 너비를 꽉 채우도록 설정 */
         }
 
-        /* 특이사항 칸 (메모장) 정렬 예외 처리 */
-        .form-group.textarea-group {
-            align-items: flex-start;
+        /* 특이사항 칸 (메모장) 기본 스타일 */
+        .form-group.textarea-group label {
+            vertical-align: top;
+            padding-top: 8px;
         }
 
         .form-group textarea {
-            flex-grow: 1;
+            width: 100%;
             resize: none;
             height: 120px;
-            border: 1px solid #000000; /* 깔끔한 검은색 테두리 */
+            border: 1px solid #000000;
             padding: 10px;
             font-size: 17px;
             font-family: inherit;
@@ -84,24 +92,26 @@
             box-sizing: border-box;
         }
 
-        /* 버튼 영역 스타일 (PDF 출력 시 숨겨짐) */
+        /* 버튼 영역 스타일 */
         .btn-container {
-            margin-top: 20px;
+            margin: 20px auto 40px auto;
             text-align: center;
             width: 100%;
             max-width: 650px;
+            padding: 0 20px;
         }
 
         .print-btn {
             background-color: #000000;
             color: #ffffff;
             border: 1px solid #000000;
-            padding: 12px 0;
-            width: 100%; /* 버튼도 서류 폭과 딱 맞게 가득 채워 정렬감 향상 */
+            padding: 15px 0;
+            width: 100%;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
+            border-radius: 4px;
         }
 
         .print-btn:hover {
@@ -109,17 +119,66 @@
             color: #000000;
         }
 
-        /* PDF 저장 시 버튼 제외 및 여백 최적화 */
-        @media print {
-            .btn-container {
-                display: none;
-            }
+        /* 2. 스마트폰 전용 화면 (모바일 최적화) 설정 */
+        @media screen and (max-width: 600px) {
             body {
-                padding: 0;
+                padding: 10px;
             }
             .report-container {
-                padding: 10px 0;
+                padding: 20px 10px;
+            }
+            h1 {
+                font-size: 22px;
+                margin-bottom: 35px;
+            }
+            /* 모바일에서는 항목명과 입력창을 위아래 배치로 전환하여 깨짐 방지 */
+            .form-group, .form-group label, .form-group .input-wrapper {
+                display: block;
                 width: 100%;
+            }
+            .form-group label {
+                margin-bottom: 8px;
+                font-size: 16px;
+            }
+            .form-group input {
+                font-size: 16px;
+                padding: 6px 5px;
+                margin-bottom: 10px;
+            }
+            .form-group textarea {
+                font-size: 16px;
+            }
+        }
+
+        /* 3. PDF 저장 및 프린트 인쇄 시 설정 (모바일에서 눌러도 깔끔한 서류로 출력되게 고정) */
+        @media print {
+            .btn-container {
+                display: none !important;
+            }
+            body {
+                padding: 0 !important;
+                background-color: #ffffff;
+            }
+            .report-container {
+                padding: 10px 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            /* 인쇄 시에는 무조건 PC 형태의 깔끔한 가로 정렬 서류로 나오도록 강제 고정 */
+            .form-group {
+                display: table !important;
+                width: 100% !important;
+            }
+            .form-group label {
+                display: table-cell !important;
+                width: 210px !important;
+                font-size: 18px !important;
+            }
+            .form-group .input-wrapper {
+                display: table-cell !important;
+            }
+            .form-group input {
+                font-size: 18px !important;
             }
         }
     </style>
@@ -131,39 +190,57 @@
         
         <div class="form-group">
             <label>날짜 :</label>
-            <input type="date" id="date">
+            <div class="input-wrapper">
+                <input type="date" id="date">
+            </div>
         </div>
         <div class="form-group">
             <label>이름 :</label>
-            <input type="text" placeholder="지원자 이름 또는 닉네임 입력">
+            <div class="input-wrapper">
+                <input type="text" placeholder="지원자 이름 또는 닉네임 입력">
+            </div>
         </div>
         <div class="form-group">
             <label>나이 :</label>
-            <input type="text" placeholder="예: 30대 / 40대">
+            <div class="input-wrapper">
+                <input type="text" placeholder="예: 30대 / 40대">
+            </div>
         </div>
         <div class="form-group">
             <label>성별 :</label>
-            <input type="text" placeholder="남 / 여">
+            <div class="input-wrapper">
+                <input type="text" placeholder="남 / 여">
+            </div>
         </div>
         <div class="form-group">
             <label>연락처 :</label>
-            <input type="text" placeholder="010-XXXX-XXXX">
+            <div class="input-wrapper">
+                <input type="text" placeholder="010-XXXX-XXXX">
+            </div>
         </div>
         <div class="form-group">
             <label>사는곳 :</label>
-            <input type="text" placeholder="동네 명칭 또는 주소 입력">
+            <div class="input-wrapper">
+                <input type="text" placeholder="동네 명칭 또는 주소 입력">
+            </div>
         </div>
         <div class="form-group">
             <label>경력 :</label>
-            <input type="text" placeholder="주방 및 홀 경력 사항 기술 (예: 주방 2년 등)">
+            <div class="input-wrapper">
+                <input type="text" placeholder="주방 및 홀 경력 사항 기술 (예: 주방 2년 등)">
+            </div>
         </div>
         <div class="form-group">
             <label>근무 가능 요일 및 시간 :</label>
-            <input type="text" placeholder="예: 주 6일(화~일) / 09:00 ~ 21:00">
+            <div class="input-wrapper">
+                <input type="text" placeholder="예: 주 6일(화~일) / 09:00 ~ 21:00">
+            </div>
         </div>
         <div class="form-group textarea-group">
             <label>특이사항 :</label>
-            <textarea placeholder="칼질 능력(상/중/하), 보건증 유무, 인상 등 사장님 메모 공간"></textarea>
+            <div class="input-wrapper">
+                <textarea placeholder="칼질 능력(상/중/하), 보건증 유무, 인상 등 사장님 메모 공간"></textarea>
+            </div>
         </div>
     </div>
 
